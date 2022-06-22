@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                cleanWs ()
+                sh  'git clone https://gopal001@bitbucket.org/gopal001/notejam-mysql.git'
+                }
+        }
+        stage('SonarCloud') {
+            environment {
+            SCANNER_HOME = tool 'SonarCloud'
+            ORGANIZATION = "Gopal Mali"
+            PROJECT_NAME = "gopal-sonar"
+            }
+            steps {
+                withSonarQubeEnv('SonarCloud') {
+                sh '$SCANNER_HOME/bin/sonar-scanner -Dsonar.organization=$ORGANIZATION -Dsonar.java.binaries=build/classes/java/ -Dsonar.projectKey=$PROJECT_NAME'
+                }
+            }
+        }
+    }
+}
